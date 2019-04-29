@@ -153,9 +153,11 @@ ERR:
 
 func InitApiServer() (err error) {
 	var (
-		mux        *http.ServeMux
-		listener   net.Listener
-		httpServer *http.Server
+		mux           *http.ServeMux
+		listener      net.Listener
+		httpServer    *http.Server
+		staticDir     http.Dir
+		statidHandler http.Handler
 	)
 
 	// 配置路由
@@ -164,6 +166,10 @@ func InitApiServer() (err error) {
 	mux.HandleFunc("/job/delete", handleJobDelete)
 	mux.HandleFunc("/job/list", handleJobList)
 	mux.HandleFunc("/job/kill", handleJobKill)
+
+	staticDir = http.Dir(G_config.WebRoot)
+	statidHandler = http.FileServer(staticDir)
+	mux.Handle("/", http.StripPrefix("/", statidHandler))
 
 	// 启动TCP监听
 	if listener, err = net.Listen("tcp", ":"+strconv.Itoa(G_config.ApiPort)); err != nil {
