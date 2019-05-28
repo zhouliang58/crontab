@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"crontab/common"
+	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 	"time"
@@ -45,6 +46,7 @@ func (jobMgr *JobMgr) watchJobs() (err error) {
 		// 反序列化json得到Job
 		if job, err = common.UnpackJob(kvpair.Value); err == nil {
 			jobEvent = common.BuildJobEvent(common.JOB_EVENT_SAVE, job)
+			fmt.Println(*jobEvent)
 			// 同步给scheduler(调度协程)
 			G_scheduler.PushJobEvent(jobEvent)
 		}
@@ -76,6 +78,7 @@ func (jobMgr *JobMgr) watchJobs() (err error) {
 					jobEvent = common.BuildJobEvent(common.JOB_EVENT_DELETE, job)
 				}
 				// 变化推给scheduler
+				fmt.Println(*jobEvent)
 				G_scheduler.PushJobEvent(jobEvent)
 			}
 		}
