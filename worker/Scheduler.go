@@ -130,7 +130,7 @@ func (scheduler *Scheduler) handleJobResult(result *common.JobExecuteResult) {
 		} else {
 			jobLog.Err = ""
 		}
-		//G_logSink.Append(jobLog)
+		G_logSink.Append(jobLog)
 	}
 
 	fmt.Println("任务执行完成:", result.ExecuteInfo.Job.Name, string(result.Output), result.Err)
